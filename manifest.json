@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Cleaner",
+  "version": "1.0.0",
+  "description": "Управление комментариями, лайками и историей YouTube.",
+  "action": {
+    "default_title": "YouTube Cleaner"
+  }
+}
