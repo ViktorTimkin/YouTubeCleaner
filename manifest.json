@@ -4,6 +4,16 @@
   "version": "1.0.0",
   "description": "Управление комментариями, лайками и историей YouTube.",
   "action": {
-    "default_title": "YouTube Cleaner"
-  }
+    "default_title": "YouTube Cleaner",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://myactivity.google.com/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
 }
