@@ -3,6 +3,10 @@ chrome.runtime.onMessage.addListener((message) => {
     if (message.action === "findComments") {
         prepareCommentsForDeletion();
     }
+
+    if (message.action === "findLikes") {
+        findDeleteAllButton();
+    }
 });
 
 async function prepareCommentsForDeletion() {
@@ -123,4 +127,40 @@ function createCounter() {
 
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function findDeleteAllButton() {
+
+    await wait(2000);
+
+    const elements = Array.from(document.querySelectorAll("*"));
+
+    const deleteAllButton = elements.find(element =>
+        element.textContent.trim() === "Удалить все"
+    );
+
+    if (!deleteAllButton) {
+        alert("Кнопка «Удалить все» не найдена");
+        return;
+    }
+
+    // Нажимаем «Удалить все»
+    deleteAllButton.click();
+
+    // Ждём появления окна подтверждения
+    await wait(500);
+
+    const confirmButtons = Array.from(document.querySelectorAll("*"));
+
+    const confirmDeleteButton = confirmButtons.find(element =>
+        element.textContent.trim() === "Удалить"
+    );
+
+    if (!confirmDeleteButton) {
+        alert("Кнопка подтверждения «Удалить» не найдена");
+        return;
+    }
+
+    // Нажимаем «Удалить»
+    confirmDeleteButton.click();
 }

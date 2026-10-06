@@ -2,34 +2,37 @@ chrome.runtime.onMessage.addListener((message) => {
 
     if (message.action === "openComments") {
 
-        chrome.tabs.create({
-            url: "https://myactivity.google.com/page?hl=ru&utm_medium=web&utm_source=youtube&page=youtube_comments"
-        }).then((tab) => {
+        openActivityPage(
+            "https://myactivity.google.com/page?hl=ru&utm_medium=web&utm_source=youtube&page=youtube_comments",
+            "findComments"
+        );
+    }
 
-            const listener = (tabId, changeInfo) => {
+    if (message.action === "openLikes") {
 
-                if (tabId === tab.id && changeInfo.status === "complete") {
-
-                    chrome.tabs.onUpdated.removeListener(listener);
-
-                    chrome.tabs.sendMessage(tab.id, {
-                        action: "findComments"
-                    }, (response) => {
-
-                        if (chrome.runtime.lastError) {
-                            console.log(
-                                "Ошибка:",
-                                chrome.runtime.lastError.message
-                            );
-                            return;
-                        }
-
-                        console.log("Ответ:", response);
-                    });
-                }
-            };
-
-            chrome.tabs.onUpdated.addListener(listener);
-        });
+        openActivityPage(
+            "https://myactivity.google.com/page?hl=ru&utm_medium=web&utm_source=youtube&page=youtube_likes",
+            "findLikes"
+        );
     }
 });
+
+function openActivityPage(url, action) {
+
+    chrome.tabs.create({ url: url }).then((tab) => {
+
+        const listener = (tabId, changeInfo) => {
+
+            if (tabId === tab.id && changeInfo.status === "complete") {
+
+                chrome.tabs.onUpdated.removeListener(listener);
+
+                chrome.tabs.sendMessage(tab.id, {
+                    action: action
+                });
+            }
+        };
+
+        chrome.tabs.onUpdated.addListener(listener);
+    });
+}
