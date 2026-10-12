@@ -1,7 +1,7 @@
-chrome.runtime.onMessage.addListener((message) => {
+
+chrome.runtime.onMessage.addListener((message, sender) => {
 
     if (message.action === "openComments") {
-
         openActivityPage(
             "https://myactivity.google.com/page?hl=ru&utm_medium=web&utm_source=youtube&page=youtube_comments",
             "findComments"
@@ -9,11 +9,21 @@ chrome.runtime.onMessage.addListener((message) => {
     }
 
     if (message.action === "openLikes") {
-
         openActivityPage(
             "https://myactivity.google.com/page?hl=ru&utm_medium=web&utm_source=youtube&page=youtube_likes",
             "findLikes"
         );
+    }
+
+    if (message.action === "openHistory") {
+        openActivityPage(
+            "https://myactivity.google.com/myactivity",
+            "findHistory"
+        );
+    }
+
+    if (message.action === "closeCurrentTab" && sender.tab?.id !== undefined) {
+        chrome.tabs.remove(sender.tab.id);
     }
 });
 

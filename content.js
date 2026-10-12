@@ -1,3 +1,4 @@
+
 chrome.runtime.onMessage.addListener((message) => {
 
     if (message.action === "findComments") {
@@ -7,7 +8,12 @@ chrome.runtime.onMessage.addListener((message) => {
     if (message.action === "findLikes") {
         findDeleteAllButton();
     }
+
+    if (message.action === "findHistory") {
+        deleteAllHistory();
+    }
 });
+
 
 async function prepareCommentsForDeletion() {
 
@@ -18,7 +24,6 @@ async function prepareCommentsForDeletion() {
 
     counter.textContent = "Загружаем комментарии...";
 
-    // Сначала прокручиваем страницу до конца
     while (stableCount < 5) {
 
         window.scrollTo({
@@ -49,18 +54,9 @@ async function prepareCommentsForDeletion() {
 
     counter.textContent = `Найдено комментариев: ${total}`;
 
-    // Спрашиваем пользователя
-    const confirmed = confirm(
-        `Найдено комментариев: ${total}\n\nУдалить все комментарии?`
-    );
-
-    if (!confirmed) {
-        counter.textContent = "Удаление отменено";
-        return;
-    }
-
     await deleteAllComments(total, counter);
 }
+
 
 async function deleteAllComments(total, counter) {
 
@@ -73,8 +69,15 @@ async function deleteAllComments(total, counter) {
         );
 
         if (deleteButtons.length === 0) {
+
             counter.textContent = `Готово: ${deleted} / ${total}`;
-            alert(`Удаление завершено.\nУдалено: ${deleted} / ${total}`);
+
+            await wait(1000);
+
+            chrome.runtime.sendMessage({
+                action: "closeCurrentTab"
+            });
+
             break;
         }
 
@@ -90,6 +93,7 @@ async function deleteAllComments(total, counter) {
     }
 }
 
+
 async function waitForButtonToDisappear(button) {
 
     for (let i = 0; i < 40; i++) {
@@ -102,12 +106,12 @@ async function waitForButtonToDisappear(button) {
     }
 }
 
+
 function createCounter() {
 
     const counter = document.createElement("div");
 
     counter.id = "youtube-cleaner-counter";
-
     counter.textContent = "Запуск...";
 
     counter.style.position = "fixed";
@@ -125,9 +129,11 @@ function createCounter() {
     return counter;
 }
 
+
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
 
 async function findDeleteAllButton() {
 
@@ -144,10 +150,8 @@ async function findDeleteAllButton() {
         return;
     }
 
-    // Нажимаем «Удалить все»
     deleteAllButton.click();
 
-    // Ждём появления окна подтверждения
     await wait(500);
 
     const confirmButtons = Array.from(document.querySelectorAll("*"));
@@ -161,6 +165,211 @@ async function findDeleteAllButton() {
         return;
     }
 
-    // Нажимаем «Удалить»
     confirmDeleteButton.click();
+
+    // Ждём, пока Google обработает удаление лайков
+    await wait(3000);
+
+    chrome.runtime.sendMessage({
+        action: "closeCurrentTab"
+    });
+}
+
+
+
+async function deleteAllHistory() {
+
+    // 1. Нажимаем «Удалить»
+    const deleteButton = await waitForText(["Удалить"], 15000);
+
+    if (!deleteButton) {
+        alert("Не найдена кнопка «Удалить»");
+        return;
+    }
+
+    deleteButton.click();
+
+    // 2. Выбираем «За все время»
+    const allTimeButton = await waitForText(
+        ["За все время", "За всё время"],
+        15000
+    );
+
+    if (!allTimeButton) {
+        alert("Не найден пункт «За все время»");
+        return;
+    }
+
+    allTimeButton.click();
+
+    // 3. Ждём окно подтверждения или сообщение об отсутствии истории
+    const start = Date.now();
+    let confirmButton = null;
+    let noHistory = false;
+
+    while (Date.now() - start < 20000) {
+
+        const pageText = (
+            document.body.innerText || ""
+        ).replace(/\s+/g, " ").toLowerCase();
+
+        if (pageText.includes("нет выбранных действий")) {
+            noHistory = true;
+
+            const buttons = Array.from(document.querySelectorAll(
+                'button, [role="button"]'
+            ));
+
+            confirmButton = buttons.find(button => {
+                const text = (
+                    button.innerText || button.textContent || ""
+                ).replace(/\s+/g, " ").trim().toLowerCase();
+
+                return ["закрыть", "ок"].includes(text) &&
+                    button.getClientRects().length > 0 &&
+                    !button.disabled;
+            });
+
+            if (confirmButton) {
+                break;
+            }
+        } else {
+            const dialogs = Array.from(document.querySelectorAll(
+                '[role="dialog"], [aria-modal="true"]'
+            ));
+
+            for (const dialog of dialogs) {
+
+                const buttons = Array.from(dialog.querySelectorAll(
+                    'button, [role="button"]'
+                ));
+
+                confirmButton = buttons.find(button =>
+                    (button.innerText || button.textContent || "")
+                        .replace(/\s+/g, " ").trim() === "Удалить" &&
+                    button.getClientRects().length > 0 &&
+                    !button.disabled
+                );
+
+                if (confirmButton) {
+                    break;
+                }
+            }
+
+            if (confirmButton) {
+                break;
+            }
+        }
+
+        await wait(300);
+    }
+
+    if (!confirmButton) {
+        alert("Не найдена кнопка подтверждения или закрытия окна");
+        return;
+    }
+
+    // 4. Если истории нет — закрываем сообщение и вкладку
+    if (noHistory) {
+        confirmButton.click();
+
+        await wait(700);
+
+        chrome.runtime.sendMessage({
+            action: "closeCurrentTab"
+        });
+
+        return;
+    }
+
+    // 5. История есть — подтверждаем удаление
+    confirmButton.click();
+
+    // 6. Ждём завершения удаления
+    const successStart = Date.now();
+    let okButton = null;
+
+    while (Date.now() - successStart < 20000) {
+
+        const dialogs = Array.from(document.querySelectorAll(
+            '[role="dialog"], [aria-modal="true"]'
+        ));
+
+        for (const dialog of dialogs) {
+
+            const text = (
+                dialog.innerText || ""
+            ).replace(/\s+/g, " ").toLowerCase();
+
+            if (!text.includes("удаление завершено")) {
+                continue;
+            }
+
+            const buttons = Array.from(dialog.querySelectorAll(
+                'button, [role="button"]'
+            ));
+
+            okButton = buttons.find(button =>
+                ["ок", "закрыть"].includes(
+                    (button.innerText || button.textContent || "")
+                        .replace(/\s+/g, " ").trim().toLowerCase()
+                ) &&
+                button.getClientRects().length > 0 &&
+                !button.disabled
+            );
+
+            if (okButton) {
+                break;
+            }
+        }
+
+        if (okButton) {
+            break;
+        }
+
+        await wait(300);
+    }
+
+    if (!okButton) {
+        alert("Удаление завершено, но кнопка «ОК» не найдена");
+        return;
+    }
+
+    okButton.click();
+
+    await wait(700);
+
+    chrome.runtime.sendMessage({
+        action: "closeCurrentTab"
+    });
+}
+
+async function waitForText(texts, timeout) {
+
+    const start = Date.now();
+
+    while (Date.now() - start < timeout) {
+
+        const elements = Array.from(document.querySelectorAll(
+            'button, [role="button"], [role="menuitem"]'
+        ));
+
+        const target = elements.find(element => {
+            const text = (element.innerText || element.textContent || "")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            return texts.includes(text) &&
+                element.getClientRects().length > 0 &&
+                !element.disabled;
+        });
+
+        if (target) {
+            return target;
+        }
+
+        await wait(300);
+    }
+
+    return null;
 }
