@@ -1,0 +1,206 @@
+/* popup.css */
+
+:root {
+    color-scheme: dark;
+    --bg: #090c11;
+    --panel: #111720;
+    --panel-hover: #1a222d;
+    --border: #28313d;
+    --red: #ff2633;
+    --red-hover: #e51d29;
+    --text: #f5f7fa;
+    --muted: #a5b2c2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    width: 360px;
+    margin: 0;
+    padding: 20px;
+    background:
+            radial-gradient(ellipse at top left, #241015 0%, transparent 48%),
+            var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logo {
+    display: flex;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--red);
+    border-radius: 15px;
+    background: #080b10;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -3px;
+    box-shadow: 0 0 18px #ff26331c;
+}
+
+.logo-y {
+    color: white;
+}
+
+.logo-c {
+    color: var(--red);
+    margin-left: 1px;
+}
+
+.brand-name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.6px;
+}
+
+.brand-name span {
+    color: var(--red);
+}
+
+.subtitle {
+    margin: 5px 0 20px 60px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-button {
+    display: flex;
+    width: 100%;
+    min-height: 78px;
+    align-items: center;
+    gap: 13px;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: linear-gradient(135deg, #151c26, var(--panel));
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 160ms ease, background 160ms ease,
+    transform 160ms ease;
+}
+
+.action-button:hover {
+    border-color: var(--red);
+    background: linear-gradient(135deg, #251a20, var(--panel-hover));
+    transform: translateY(-1px);
+}
+
+.action-button:active {
+    transform: scale(0.985);
+}
+
+.action-button:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+}
+
+.action-icon {
+    display: flex;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: #2a3441;
+    color: #f5f7fa;
+    font-size: 23px;
+}
+
+.action-button:first-child .action-icon {
+    background: linear-gradient(145deg, #ff3541, #d91421);
+}
+
+.action-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.action-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.action-description {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.arrow {
+    color: #aeb9c7;
+    font-size: 25px;
+    font-weight: 300;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 17px;
+    padding-top: 13px;
+    border-top: 1px solid #202833;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.youtube-mark {
+    position: relative;
+    width: 19px;
+    height: 13px;
+    border-radius: 4px;
+    background: var(--red);
+}
+
+.youtube-mark::after {
+    position: absolute;
+    top: 3px;
+    left: 8px;
+    width: 0;
+    height: 0;
+    border-top: 3.5px solid transparent;
+    border-bottom: 3.5px solid transparent;
+    border-left: 5px solid white;
+    content: "";
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #31c878;
+}

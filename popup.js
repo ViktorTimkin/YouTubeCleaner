@@ -1,26 +1,21 @@
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    const buttons = document.querySelectorAll("button");
-
-    // Комментарии
-    buttons[0].addEventListener("click", () => {
+    document.getElementById("commentsButton").addEventListener("click", () => {
         chrome.runtime.sendMessage({
             action: "openComments"
         });
     });
 
-    // Лайки
-    buttons[1].addEventListener("click", () => {
+    document.getElementById("likesButton").addEventListener("click", () => {
         chrome.runtime.sendMessage({
             action: "openLikes"
         });
     });
 
-    // История просмотров
-    buttons[2].addEventListener("click", () => {
+    document.getElementById("historyButton").addEventListener("click", () => {
         chrome.runtime.sendMessage({
             action: "openHistory"
         });
     });
+
 });

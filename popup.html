@@ -2,15 +2,67 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Cleaner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTubeCleaner</title>
+    <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+<header class="header">
+    <div class="logo" aria-label="YC">
+        <span class="logo-y">Y</span><span class="logo-c">C</span>
+    </div>
 
-<h2>YouTube Cleaner</h2>
+    <h1 class="brand-name">YouTube<span>Cleaner</span></h1>
+</header>
 
-<button>Удалить комментарии</button>
-<button>Убрать лайки</button>
-<button>Очистить историю</button>
+<p class="subtitle">Выберите, что нужно очистить</p>
+
+<main class="actions">
+    <button class="action-button" id="commentsButton" type="button">
+        <span class="action-icon" aria-hidden="true">▤</span>
+        <span class="action-copy">
+                <span class="action-title">Удалить комментарии</span>
+                <span class="action-description">
+                    Очистить комментарии YouTube
+                </span>
+            </span>
+        <span class="arrow" aria-hidden="true">›</span>
+    </button>
+
+    <button class="action-button" id="likesButton" type="button">
+        <span class="action-icon" aria-hidden="true">♥</span>
+        <span class="action-copy">
+                <span class="action-title">Удалить лайки</span>
+                <span class="action-description">
+                    Убрать все поставленные лайки
+                </span>
+            </span>
+        <span class="arrow" aria-hidden="true">›</span>
+    </button>
+
+    <button class="action-button" id="historyButton" type="button">
+        <span class="action-icon" aria-hidden="true">◷</span>
+        <span class="action-copy">
+                <span class="action-title">Очистить историю</span>
+                <span class="action-description">
+                    Удалить историю просмотров YouTube
+                </span>
+            </span>
+        <span class="arrow" aria-hidden="true">›</span>
+    </button>
+</main>
+
+<footer class="footer">
+        <span class="footer-brand">
+            <span class="youtube-mark" aria-hidden="true"></span>
+            YouTubeCleaner
+        </span>
+
+    <span class="status">
+            <span class="status-dot" aria-hidden="true"></span>
+            Готов к работе
+        </span>
+</footer>
 
 <script src="popup.js"></script>
 </body>
