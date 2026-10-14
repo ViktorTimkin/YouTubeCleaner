@@ -35,28 +35,22 @@ body {
 }
 
 .logo {
-    display: flex;
+    display: block;
     width: 48px;
     height: 48px;
     flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--red);
-    border-radius: 15px;
-    background: #080b10;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: -3px;
-    box-shadow: 0 0 18px #ff26331c;
+    border: none;
+    border-radius: 14px;
+    object-fit: contain;
 }
 
-.logo-y {
-    color: white;
+.logo > span:first-child {
+    position: relative;
+    z-index: 1;
 }
 
-.logo-c {
-    color: var(--red);
-    margin-left: 1px;
+.logo-play {
+    display: none;
 }
 
 .brand-name {
@@ -127,9 +121,6 @@ body {
     font-size: 23px;
 }
 
-.action-button:first-child .action-icon {
-    background: linear-gradient(145deg, #ff3541, #d91421);
-}
 
 .action-copy {
     display: flex;
